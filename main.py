@@ -1,24 +1,9 @@
-from fastapi import FastAPI, HTTPException
-from pydantic import BaseModel
-from typing import List, Optional
+from fastapi import FastAPI
 
-app = FastAPI(title= "API de Tarefas")
+app = FastAPI()
 
-class Tarefas(BaseModel):
-    id: Optional [int] = None
-    titulo: str
-    descrição: str
-    concluida: bool = False
+from auth_routes import auth_router
+from order_routes import order_router
 
-db_tarefas = []
-
-@app.get("/tarefas",response_model=List[Tarefas])
-
-async def listar_taferas():
-    return db_tarefas
-
-@app.post("/tarefas",response_model=Tarefas, status_code= 201)
-async def criar_tarefa(tarefa: Tarefas):
-    tarefa.id = len(db_tarefas) +1
-    db_tarefas.append(tarefa)
-    return tarefa
+app.include_router(auth_router)
+app.include_router(order_router)
